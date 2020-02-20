@@ -1,9 +1,13 @@
 from file_interface import read_file, write_file
+import numpy as np
 from multiprocessing import Pool
 
 
+def gaussian(x, mu, sig):
+    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
-def compute_single_score(lib, d, profits, books, lib_index):
+
+def compute_single_score(lib, d, profits, books, lib_index, w):
     book_rank = []
     for book in lib['list']:
         if book in books:
@@ -18,7 +22,7 @@ def compute_single_score(lib, d, profits, books, lib_index):
     for b in avail_book_rank:
         lib_score += b[1]
 
-    return lib_index, avail_book_rank, lib_score
+    return lib_index, avail_book_rank, w*lib_score
 
 
 def compute_library_score(libs, d, profits, books, chosen):
@@ -26,9 +30,19 @@ def compute_library_score(libs, d, profits, books, chosen):
     lib_index = 0
 
     for lib in libs:
+<<<<<<< HEAD
         if lib_index not in chosen:
             single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
             lib_rank.append((single_lib_score[0], single_lib_score[1], single_lib_score[2], lib['signup'], lib['books']))
+=======
+        sat = lib['ship']
+        if sat > sat_mean:
+            w = gaussian(sat, sat_mean, sat_std)
+        else:
+            w = 1
+        single_lib_score = compute_single_score(lib, d, profits, books, lib_index, w)
+        lib_rank.append(single_lib_score)
+>>>>>>> f69ebcf2948fb39dd0e18459d4c3db47a763c2ab
         lib_index += 1
 
     # pool = Pool(None)
@@ -39,10 +53,18 @@ def compute_library_score(libs, d, profits, books, chosen):
     #     lib_index += 1
     # for job in jobs:
     #     single_lib_score = job.get(timeout=None)
+    #     lib_rank.append(single_lib_score)
+    # pool.close()
+    # pool.join()
     #     print(single_lib_score[0])
     #     lib_rank.append(single_lib_score)
 
+<<<<<<< HEAD
     lib_rank.sort(reverse=True, key=lambda x: x[2])
+=======
+
+    lib_rank.sort(reverse=True, key=lambda x: x[2]-lib['signup'])
+>>>>>>> f69ebcf2948fb39dd0e18459d4c3db47a763c2ab
     return lib_rank[0]
 
 
@@ -54,6 +76,14 @@ for i in range(info['n_books']):
 days = info['days']
 profits = info['profits']
 libreries = info['libreries']
+sat_arr = []
+for lib in libreries:
+    sat_arr.append(lib['ship'])
+sat_arr = np.array(sat_arr)
+sat_mean = sat_arr.mean()
+sat_std = sat_arr.std()
+
+
 output = {}
 sum = 0
 chosen = set()
