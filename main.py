@@ -30,19 +30,15 @@ def compute_library_score(libs, d, profits, books, chosen):
     lib_index = 0
 
     for lib in libs:
-<<<<<<< HEAD
         if lib_index not in chosen:
             single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
+            sat = lib['ship']
+            if sat > sat_mean:
+                w = gaussian(sat, sat_mean, sat_std)
+            else:
+                w = 1
+            single_lib_score = compute_single_score(lib, d, profits, books, lib_index, w)
             lib_rank.append((single_lib_score[0], single_lib_score[1], single_lib_score[2], lib['signup'], lib['books']))
-=======
-        sat = lib['ship']
-        if sat > sat_mean:
-            w = gaussian(sat, sat_mean, sat_std)
-        else:
-            w = 1
-        single_lib_score = compute_single_score(lib, d, profits, books, lib_index, w)
-        lib_rank.append(single_lib_score)
->>>>>>> f69ebcf2948fb39dd0e18459d4c3db47a763c2ab
         lib_index += 1
 
     # pool = Pool(None)
@@ -59,12 +55,7 @@ def compute_library_score(libs, d, profits, books, chosen):
     #     print(single_lib_score[0])
     #     lib_rank.append(single_lib_score)
 
-<<<<<<< HEAD
     lib_rank.sort(reverse=True, key=lambda x: x[2])
-=======
-
-    lib_rank.sort(reverse=True, key=lambda x: x[2]-lib['signup'])
->>>>>>> f69ebcf2948fb39dd0e18459d4c3db47a763c2ab
     return lib_rank[0]
 
 
