@@ -21,13 +21,14 @@ def compute_single_score(lib, d, profits, books, lib_index):
     return lib_index, avail_book_rank, lib_score
 
 
-def compute_library_score(libs, d, profits, books):
+def compute_library_score(libs, d, profits, books, chosen):
     lib_rank = []
     lib_index = 0
 
     for lib in libs:
-        single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
-        lib_rank.append(single_lib_score)
+        if lib_index not in chosen:
+            single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
+            lib_rank.append((single_lib_score[0], single_lib_score[1], single_lib_score[2], lib['signup'], lib['books']))
         lib_index += 1
 
     # pool = Pool(None)
@@ -41,11 +42,11 @@ def compute_library_score(libs, d, profits, books):
     #     print(single_lib_score[0])
     #     lib_rank.append(single_lib_score)
 
-    lib_rank.sort(reverse=True, key=lambda x: x[2]-lib['signup'])
+    lib_rank.sort(reverse=True, key=lambda x: x[2])
     return lib_rank[0]
 
 
-filename = "f_libraries_of_the_world"
+filename = "b_read_on"
 info = read_file(filename+".txt")
 books = set()
 for i in range(info['n_books']):
@@ -55,8 +56,9 @@ profits = info['profits']
 libreries = info['libreries']
 output = {}
 sum = 0
+chosen = set()
 while days > 0 and len(output) != info['n_libreries']:
-    key, value, temp = compute_library_score(libreries, days, profits, books)
+    key, value, temp, _, _ = compute_library_score(libreries, days, profits, books, output)
     list_books = []
     sum += temp
     if temp > 0:
@@ -66,6 +68,7 @@ while days > 0 and len(output) != info['n_libreries']:
         output[key] = list_books
         print(len(output), sum)
         days -= libreries[key]['signup']
+        chosen.add(key)
     else:
         break
 
