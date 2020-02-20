@@ -10,7 +10,6 @@ def read_file(filename):
         info['n_libreries'] = int(part1[1])
         info['days'] = int(part1[2])
         info['profits'] = [int(elem) for elem in part2]
-        print(info)
         flag = True
         libraries = []
         for elem in part3:
@@ -27,5 +26,18 @@ def read_file(filename):
         info['libreries'] = libraries
         return info
 
-def out_file(filename):
-    pass
+def write_file(filename, output):
+    with open(filename, 'w') as f:
+        f.write(str(output['n_libreries'])+"\n")
+        for key, value in output['libreries'].items():
+            f.write(str(key)+" "+str(len(value))+"\n")
+            i = 0
+            for elem in value:
+                f.write(str(elem))
+                if i == len(value)-1:
+                    f.write("\n")
+                    break
+                else:
+                    f.write(" ")
+                i += 1
+
