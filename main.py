@@ -50,8 +50,11 @@ def compute_library_score(libs, d, profits, books):
     #     lib_rank.append(single_lib_score)
     # pool.close()
     # pool.join()
+    #     print(single_lib_score[0])
+    #     lib_rank.append(single_lib_score)
 
-    lib_rank.sort(reverse=True, key=lambda x: x[2])
+
+    lib_rank.sort(reverse=True, key=lambda x: x[2]-lib['signup'])
     return lib_rank[0]
 
 
@@ -72,15 +75,17 @@ sat_std = sat_arr.std()
 
 
 output = {}
+sum = 0
 while days > 0 and len(output) != info['n_libreries']:
     key, value, temp = compute_library_score(libreries, days, profits, books)
     list_books = []
+    sum += temp
     if temp > 0:
         for elem in value:
             books.remove(elem[0])
             list_books.append(elem[0])
         output[key] = list_books
-        print(len(output))
+        print(len(output), sum)
         days -= libreries[key]['signup']
     else:
         break
