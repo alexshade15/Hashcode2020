@@ -1,25 +1,45 @@
 from file_interface import read_file, write_file
+from multiprocessing import Pool
+
+
+
+def compute_single_score(lib, d, profits, books, lib_index):
+    book_rank = []
+    for book in lib['list']:
+        if book in books:
+            score = profits[book]
+            book_rank.append((book, score))
+
+    book_rank.sort(reverse=True, key=lambda x: x[1])
+    n_books = lib['ship'] * (d - lib['signup'])
+    avail_book_rank = book_rank[:n_books]
+
+    lib_score = 0
+    for b in avail_book_rank:
+        lib_score += b[1]
+
+    return lib_index, avail_book_rank, lib_score
 
 
 def compute_library_score(libs, d, profits, books):
     lib_rank = []
     lib_index = 0
+
+    # for lib in libs:
+    #     single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
+    #     lib_rank.append(single_lib_score)
+    #     lib_index += 1
+
+    pool = Pool(None)
+    jobs = []
+
     for lib in libs:
-        book_rank = []
-        for book in lib['list']:
-            if book in books:
-                score = profits[book]
-                book_rank.append((book, score))
-
-        book_rank.sort(reverse=True, key=lambda x: x[1])
-        n_books = lib['ship'] * (d - lib['signup'])
-        avail_book_rank = book_rank[:n_books]
-
-        lib_score = 0
-        for b in avail_book_rank:
-            lib_score += b[1]
-        lib_rank.append((lib_index, avail_book_rank, lib_score))
+        jobs.append(pool.apply_async(compute_single_score, (lib, d, profits, books, lib_index)))
         lib_index += 1
+    for job in jobs:
+        single_lib_score = job.get(timeout=None)
+        print(single_lib_score[0])
+        lib_rank.append(single_lib_score)
 
     lib_rank.sort(reverse=True, key=lambda x: x[2]-lib['signup'])
     return lib_rank[0]
