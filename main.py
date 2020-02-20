@@ -25,21 +25,21 @@ def compute_library_score(libs, d, profits, books):
     lib_rank = []
     lib_index = 0
 
-    # for lib in libs:
-    #     single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
-    #     lib_rank.append(single_lib_score)
-    #     lib_index += 1
-
-    pool = Pool(None)
-    jobs = []
-
     for lib in libs:
-        jobs.append(pool.apply_async(compute_single_score, (lib, d, profits, books, lib_index)))
-        lib_index += 1
-    for job in jobs:
-        single_lib_score = job.get(timeout=None)
-        print(single_lib_score[0])
+        single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
         lib_rank.append(single_lib_score)
+        lib_index += 1
+
+    # pool = Pool(None)
+    # jobs = []
+    #
+    # for lib in libs:
+    #     jobs.append(pool.apply_async(compute_single_score, (lib, d, profits, books, lib_index)))
+    #     lib_index += 1
+    # for job in jobs:
+    #     single_lib_score = job.get(timeout=None)
+    #     print(single_lib_score[0])
+    #     lib_rank.append(single_lib_score)
 
     lib_rank.sort(reverse=True, key=lambda x: x[2]-lib['signup'])
     return lib_rank[0]
