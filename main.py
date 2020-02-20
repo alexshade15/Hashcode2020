@@ -31,7 +31,6 @@ def compute_library_score(libs, d, profits, books, chosen):
 
     for lib in libs:
         if lib_index not in chosen:
-            single_lib_score = compute_single_score(lib, d, profits, books, lib_index)
             sat = lib['ship']
             if sat > sat_mean:
                 w = gaussian(sat, sat_mean, sat_std)
