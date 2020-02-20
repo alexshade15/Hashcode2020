@@ -25,7 +25,7 @@ def compute_library_score(libs, d, profits, books):
     return lib_rank[0]
 
 
-filename = "d_tough_choices"
+filename = "c_incunabula"
 info = read_file(filename+".txt")
 books = set()
 for i in range(info['n_books']):
@@ -37,12 +37,15 @@ output = {}
 while days > 0 and len(output) != info['n_libreries']:
     key, value, temp = compute_library_score(libreries, days, profits, books)
     list_books = []
-    for elem in value:
-        books.remove(elem[0])
-        list_books.append(elem[0])
-    output[key] = list_books
-    print(len(output))
-    days -= libreries[key]['signup']
+    if temp > 0:
+        for elem in value:
+            books.remove(elem[0])
+            list_books.append(elem[0])
+        output[key] = list_books
+        print(len(output))
+        days -= libreries[key]['signup']
+    else:
+        break
 
 outdict = {}
 outdict['n_libreries'] = len(output)
