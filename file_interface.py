@@ -17,14 +17,15 @@ def read_file(filename):
             if temp[0] is '':
                 break
             if flag:
-                library = {'books':temp[0], 'signup':temp[1], 'ship':temp[2]}
+                library = {'books':int(temp[0]), 'signup':int(temp[1]), 'ship':int(temp[2])}
                 flag = False
             else:
-                library['list'] = temp
+                library['list'] = [int(x) for x in temp]
                 libraries.append(library)
                 flag = True
         info['libreries'] = libraries
         return info
+
 
 def write_file(filename, output):
     with open(filename, 'w') as f:
